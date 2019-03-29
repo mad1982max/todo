@@ -8,7 +8,6 @@ export default class SearchPanel extends Component {
   }
   
   onHandleChange = (e) => {
-    console.log(e.target.value); 
     this.setState({searchLabel: e.target.value})
     this.props.filterList(e.target.value);   
   }

@@ -18,7 +18,8 @@ export default class App extends Component {
       this.createTodoItem('Do homework'),
       this.createTodoItem('Take shower')
     ],
-    term: ''
+    term: '',
+    filter: 'all'
   };
 
   toggleProperty(arr, id, propName) {
@@ -39,6 +40,24 @@ export default class App extends Component {
     return items.filter(val => {
       return val.label.toLowerCase().indexOf(term.toLowerCase()) > -1
     })
+  }
+
+  filter(items, filter) {
+    switch(filter) {
+      case 'all':
+        return items;
+      case 'active':
+        return items.filter(val => !val.done);
+      case 'done':
+        return items.filter(val => val.done);
+      default:
+        console.log('unknown case'); 
+        return items;       
+    }
+  }
+
+  filterCase = (filter) => {
+    this.setState({filter})
   }
 
   filterList = (term) => {
@@ -98,17 +117,19 @@ export default class App extends Component {
   };
 
   render() {
-    const { todoData, term } = this.state;
+    const { todoData, term, filter } = this.state;
     const doneCount = todoData.filter(val => val.done).length;    
     const todoCount = todoData.length - doneCount;
-    const visibleItems = this.search(todoData, term);
+    const visibleItems = this.filter(this.search(todoData, term), filter);
 
     return (
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel filterList = {this.filterList}/>
-          <ItemStatusFilter />
+          <ItemStatusFilter 
+            filterCurrent = {filter}
+            getFilter = {this.filterCase}/>
         </div>
 
         <TodoList
